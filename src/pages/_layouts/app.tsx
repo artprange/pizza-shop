@@ -7,7 +7,6 @@ import { api } from '../../lib/axios'
 
 export function AppLayout() {
   const navigate = useNavigate()
-
   useEffect(() => {
     const interceptorId = api.interceptors.response.use(
       (response) => response,
@@ -18,16 +17,16 @@ export function AppLayout() {
 
           if (status === 401 && code === 'UNAUTHORIZED') {
             navigate('/sign-in', { replace: true })
+          } else {
+            throw error
           }
         }
       },
     )
-
     return () => {
       api.interceptors.response.eject(interceptorId)
     }
   }, [navigate])
-
   return (
     <div className="flex min-h-screen flex-col antialiased">
       <Header />
