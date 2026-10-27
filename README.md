@@ -1,11 +1,12 @@
 # Pizza Shop
 
-Painel de pizzaria em React, TypeScript e Vite, com dashboard, pedidos, perfil,
-login e cadastro. Usa React Query, Axios, Tailwind e MSW.
+A pizza restaurant management app built with React, TypeScript, and Vite,
+featuring a dashboard, orders, profile, sign-in, and sign-up pages.
+Uses React Query, Axios, Tailwind, and MSW.
 
-## Executar localmente
+## Run locally
 
-Com o nvm instalado:
+With nvm installed:
 
 ```bash
 nvm use
@@ -13,44 +14,44 @@ npm ci
 npm run dev
 ```
 
-Se necessário, use `nvm install` para instalar o Node 22 indicado em `.nvmrc`.
-Abra o endereço exibido no terminal (normalmente http://localhost:5173).
-Se a porta estiver ocupada, o Vite escolherá outra.
+If needed, run `nvm install` to install Node 22 as specified in `.nvmrc`.
+Open the address shown in the terminal (usually http://localhost:5173).
+If the port is already in use, Vite will choose another one.
 
-`npm run dev` usa o modo `test` do Vite e carrega `.env.test`, ativando a API
-simulada no navegador. Não precisa de backend nem de `.env` adicional.
-`npm run dev:test` oferece o mesmo modo na porta 1985 para os testes E2E.
+`npm run dev` uses Vite's `test` mode and loads `.env.test`, enabling the mock
+API in the browser. No backend or additional `.env` file is required.
+`npm run dev:test` runs the same mode on port 1985 for E2E tests.
 
 - Dashboard: `/`.
-- Pedidos: `/orders`, com 240 registros fictícios em 24 páginas.
-- Login simulado: `/sign-in`, usando `johndoe@example.com`. Não envia e-mail real.
+- Orders: `/orders`, with 240 fictional records across 24 pages.
+- Mock sign-in: `/sign-in`, using `johndoe@example.com`. No real email is sent.
 
-Os pedidos têm datas distribuídas pelos últimos 60 dias, clientes fictícios,
-produtos e totais variados. Lista e detalhes compartilham os mesmos registros.
-Aprovação, cancelamento, despacho e entrega alteram os dados em memória;
-recarregar a página restaura a demonstração. Os indicadores do dashboard ainda
-usam suas próprias fixtures; a integração das métricas faz parte do backlog.
+Orders span the past 60 days and include fictional customers, different products,
+and varied totals. The list and detail views share the same records.
+Approving, canceling, dispatching, and delivering orders update in-memory data;
+reloading the page resets the demo. Dashboard metrics still use their own
+fixtures; integrating them with the order data is part of the backlog.
 
-## Executar com backend real
+## Run with a real backend
 
-O backend não está incluído neste repositório:
+The backend is not included in this repository:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Configure `VITE_API_URL` em `.env.local` com a URL real da sua API. A porta 3333
-do exemplo é ilustrativa; não existe um servidor nessa porta por padrão.
+Set `VITE_API_URL` in `.env.local` to your actual API URL. Port 3333 in the
+example is only a placeholder; no server runs on that port by default.
 
 ```bash
 npm run dev:api
 ```
 
-Esse comando desativa os mocks. Reinicie o Vite após alterar variáveis de
-ambiente. O build padrão também exige uma API real configurada.
-Não coloque segredos em variáveis `VITE_*`: elas são expostas no navegador.
+This command disables mocks. Restart Vite after changing environment variables.
+The default build also requires a real API to be configured.
+Do not store secrets in `VITE_*` variables: they are exposed in the browser.
 
-## Verificações
+## Checks
 
 ```bash
 npm test -- --run
@@ -59,11 +60,48 @@ npx playwright install chromium
 npx playwright test
 ```
 
-O Vitest executa apenas os testes unitários de `src`. O Playwright inicia
-`npm run dev:test` na porta 1985, ou reutiliza esse servidor em ambiente local.
+Vitest runs only the unit tests in `src`. Playwright starts `npm run dev:test`
+on port 1985, or reuses that server when running locally.
 
-## Próximas entregas
+## Next steps
 
-Veja [BACKLOG.md](BACKLOG.md) para o plano de login real, visão teste e deploy.
-O modo local atual não implementa autenticação real nem a entrada pública de
-uma demonstração em produção.
+See [BACKLOG.md](BACKLOG.md) for the plan covering real authentication, demo mode,
+and deployment. The current version does not implement real authentication.
+The deployment below publishes only the demo; switching between a real account
+and demo mode remains on the backlog.
+
+## Deploy the demo to Vercel
+
+The `deploy-vercel` branch includes `vercel.json` with the build and SPA routing
+configuration.
+
+1. Push that branch to GitHub and import the repository into Vercel.
+2. Use the repository root as the Root Directory and select the **Vite** preset.
+3. Select **Node.js 22.x**. The configuration file sets `npm ci`,
+   `npm run build:demo`, and `dist` as the output directory.
+4. Deploy the `deploy-vercel` branch as a Preview. To use it on the production
+   domain, set it as the Production Branch or merge the changes into `main`.
+5. Do not point `VITE_API_URL` to localhost in Vercel. Remove overrides for
+   `VITE_API_URL`/`VITE_ENABLE_API_DELAY` to use `.env.demo`.
+
+This deployment is public and uses fictional data, without a backend or real
+authentication. MSW runs in the browser over HTTPS; data is isolated per page
+and resets on reload. Sign-in and sign-up are simulations only. Do not enter
+real personal information in the forms. A notice identifies the demo.
+
+To validate the same build locally:
+
+```bash
+npm run build:demo
+npm run preview
+```
+
+Open `/`, `/orders`, `/sign-in`, and `/sign-up`; also test reloading `/orders`.
+The rewrite follows [Vercel's guidance for Vite SPAs](https://vercel.com/docs/frameworks/frontend/vite).
+The service worker must be served as JavaScript, not as `index.html`.
+
+Once a real API is available, change the Vercel build command to `npm run build`,
+set `VITE_API_URL` to the API's HTTPS URL, and set `VITE_ENABLE_API_DELAY=false`.
+That build uses `production` mode, which does not enable mocks. Implement real
+authentication and backend authorization before treating this version as an
+authenticated application.

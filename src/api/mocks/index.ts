@@ -1,3 +1,4 @@
+import { http, HttpResponse } from 'msw'
 import { setupWorker } from 'msw/browser'
 
 import { env } from '@/env'
@@ -20,6 +21,7 @@ import { registerRestaurantMock } from './register-restaurant-mock'
 import { signInMock } from './sign-in-mock'
 import { updateProfileMock } from './update-profile-mock'
 export const worker = setupWorker(
+  http.post('/sign-out', () => new HttpResponse(null, { status: 204 })),
   signInMock,
   registerRestaurantMock,
   getDayOrdersAmountMock,
@@ -40,7 +42,7 @@ export const worker = setupWorker(
 )
 
 export async function enableMSW() {
-  if (env.MODE !== 'test') {
+  if (env.MODE !== 'test' && env.MODE !== 'demo') {
     return
   }
   await worker.start()
