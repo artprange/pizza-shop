@@ -51,6 +51,9 @@ export function OrderTableRow({ order }: OrderTableRowProps) {
         }),
       })
     })
+
+    queryClient.invalidateQueries({ queryKey: ['order', orderId] })
+    queryClient.invalidateQueries({ queryKey: ['orders'] })
   }
 
   const { mutateAsync: cancelOrderFn, isPending: isCancelingOrder } =

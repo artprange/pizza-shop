@@ -9,11 +9,11 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   // reporter: 'html',
   use: {
-    baseURL: 'http://localhost:50789',
+    baseURL: 'http://localhost:1985',
   },
   webServer: {
-    command: 'pnpm dev:test',
-    url: 'http://localhost:50789',
+    command: 'npm run dev:test -- --strictPort',
+    url: 'http://localhost:1985',
     reuseExistingServer: !process.env.CI,
   },
   // projects: [

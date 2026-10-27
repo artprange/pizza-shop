@@ -2,27 +2,7 @@ import { http, HttpResponse } from 'msw'
 
 import type { GetOrdersResponse } from '../get-orders'
 
-type Orders = GetOrdersResponse['orders']
-
-type OrderStatus = GetOrdersResponse['orders'][number]['status']
-
-const statuses: OrderStatus[] = [
-  'pending',
-  'processing',
-  'canceled',
-  'delivered',
-  'delivering',
-]
-
-const orders: Orders = Array.from({ length: 60 }).map((_, i) => {
-  return {
-    orderId: `order-${i + 1}`,
-    customerName: `Customer ${i + 1}`,
-    createdAt: new Date().toISOString(),
-    total: 2400,
-    status: statuses[i % 5],
-  }
-})
+import { demoOrders } from './orders-data'
 
 export const getOrdersMock = http.get<never, never, GetOrdersResponse>(
   '/orders',
@@ -36,11 +16,19 @@ export const getOrdersMock = http.get<never, never, GetOrdersResponse>(
     const orderId = searchParams.get('orderId')
     const status = searchParams.get('status')
 
-    let filteredOrders = orders
+    let filteredOrders = demoOrders.map((order) => ({
+      orderId: order.id,
+      customerName: order.customer.name,
+      createdAt: order.createdAt,
+      total: order.totalInCents,
+      status: order.status,
+    }))
 
     if (customerName) {
       filteredOrders = filteredOrders.filter((order) =>
-        order.customerName.includes(customerName),
+        order.customerName
+          .toLocaleLowerCase('pt-BR')
+          .includes(customerName.toLocaleLowerCase('pt-BR')),
       )
     }
 
